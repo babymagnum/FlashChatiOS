@@ -34,7 +34,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         //TODO: Set yourself as the delegate and datasource here:
         messageTableView.delegate = self
         messageTableView.dataSource = self
-                
+        
         //TODO: Set yourself as the delegate of the text field here:
         messageTextfield.delegate = self
         
@@ -101,7 +101,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
             
             let id = NSUUID().uuidString.lowercased()
             
-            insertToFirestore(modelMessage: Message(id: id, message: (messageTextfield.text?.trim())!, sender: currentUser!, imageUrl: "123"))
+            insertToFirestore(modelMessage: Message(id: id, message: (messageTextfield.text?.trim())!, sender: currentUser!, imageUrl: "123", timestamp: currentTimeInMilliSeconds()))
             
             messageTextfield.text = ""
         }
@@ -129,6 +129,12 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     //MARK: - Main Functions
+    func currentTimeInMilliSeconds()-> Int {
+        let currentDate = Date()
+        let since1970 = currentDate.timeIntervalSince1970
+        return Int(since1970 * 1000)
+    }
+    
     func configureTableView() {
         messageTableView.rowHeight = UITableView.automaticDimension
         messageTableView.estimatedRowHeight = UITableView.automaticDimension
@@ -178,7 +184,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
                     for document in querySnapshot!.documents {
                         let data = document.data()
                         
-                        let messageModel = Message(id: data["id"] as! String, message: data["message"] as! String, sender: data["sender"] as! String, imageUrl: data["imageUrl"] as! String)
+                        let messageModel = Message(id: data["id"] as! String, message: data["message"] as! String, sender: data["sender"] as! String, imageUrl: data["imageUrl"] as! String, timestamp: data["timestamp"] as! Int)
                         
                         self.message.append(messageModel)
                         

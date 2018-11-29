@@ -13,17 +13,11 @@ class Message {
     var imageUrl: String?
     var timestamp: Int?
     
-    init(id:String, message:String, sender:String, imageUrl:String) {
+    init(id:String, message:String, sender:String, imageUrl:String, timestamp: Int) {
         self.id = id
         self.message = message
         self.sender = sender
         self.imageUrl = imageUrl
-        self.timestamp = self.currentTimeInMilliSeconds()
-    }
-    
-    func currentTimeInMilliSeconds()-> Int {
-        let currentDate = Date()
-        let since1970 = currentDate.timeIntervalSince1970
-        return Int(since1970 * 1000)
+        self.timestamp = timestamp
     }
 }
