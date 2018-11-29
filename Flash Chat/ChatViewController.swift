@@ -34,16 +34,10 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         //TODO: Set yourself as the delegate and datasource here:
         messageTableView.delegate = self
         messageTableView.dataSource = self
-        
-        
+                
         //TODO: Set yourself as the delegate of the text field here:
         messageTextfield.delegate = self
         
-        
-        //TODO: Set the tapGesture here:
-        
-        
-
         //TODO: Register your MessageCell.xib file here:
         messageTableView.register(UINib(nibName: "MessageCell", bundle: nil), forCellReuseIdentifier: "customMessageCell")
         
@@ -52,7 +46,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         getDataFromFirestore()
     }
 
-    //protocol func for uitable view
+    //MARK: - Protocol Function for TableView
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return message.count
     }
@@ -80,6 +74,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         performSegue(withIdentifier: "goToDetail", sender: self)
     }
     
+    //MARK: - Prepare for Segue function
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "goToDetail" {
             let segue = segue.destination as! LastViewController
@@ -88,43 +83,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         }
     }
     
-//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-//        return UITableView.automaticDimension
-//    }
-    
-    ///////////////////////////////////////////
-    
-    //MARK: - TableView DataSource Methods
-    
-    
-    
-    //TODO: Declare cellForRowAtIndexPath here:
-    
-    
-    
-    //TODO: Declare numberOfRowsInSection here:
-    
-    
-    
-    //TODO: Declare tableViewTapped here:
-    
-    
-    
-    //TODO: Declare configureTableView here:
-    func configureTableView() {
-        messageTableView.rowHeight = UITableView.automaticDimension
-        messageTableView.estimatedRowHeight = UITableView.automaticDimension
-    }
-    
-    
-    ///////////////////////////////////////////
-    
-    //MARK:- TextField Delegate Methods
-    
-    
-
-    
-    //TODO: Declare textFieldDidBeginEditing here:
+    //MARK: - Text Field Delegate Method
     func textFieldDidBeginEditing(_ textField: UITextField) {
         UIView.animate(withDuration: 0.5) {
             self.heightConstraint.constant = 308
@@ -132,9 +91,6 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         }
     }
     
-    
-    
-    //TODO: Declare textFieldDidEndEditing here:
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if textField == messageTextfield {
             messageTextfield.resignFirstResponder()
@@ -152,11 +108,43 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         
         return true
     }
+    
+    //MARK: - Handle Outlet Button Pressed
+    @IBAction func sendPressed(_ sender: AnyObject) {
+        
+        //TODO: Send the message to Firebase and save it in our database
+        performSegue(withIdentifier: "goToLast", sender: self)
+        
+    }
+    
+    @IBAction func logOutPressed(_ sender: AnyObject) {
+        
+        //TODO: Log out the user and send them back to WelcomeViewController
+        do{
+            try Auth.auth().signOut()
+            navigationController?.popToRootViewController(animated: true)
+        } catch{
+            showDialog(title: "Sign Out Error", message: "There was something error when you perform logout, please check your internet connection and make sure its connected")
+        }
+    }
+    
+    //MARK: - Main Functions
+    func configureTableView() {
+        messageTableView.rowHeight = UITableView.automaticDimension
+        messageTableView.estimatedRowHeight = UITableView.automaticDimension
+    }
+    
+    func showDialog(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        
+        alert.addAction(UIAlertAction(title: "Understand", style: .default){
+            (UIAlertAction) in
+            alert.dismiss(animated: true, completion: nil)
+        })
+        
+        present(alert, animated: true)
+    }
 
-    
-    ///////////////////////////////////////////
-    
-    
     //MARK: - Send & Recieve from Firebase
     func insertToFirestore(modelMessage: Message) {
         let data : [String : Any] = [
@@ -210,42 +198,4 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         }
     }
     
-    
-    @IBAction func sendPressed(_ sender: AnyObject) {
-        
-        
-        //TODO: Send the message to Firebase and save it in our database
-        performSegue(withIdentifier: "goToLast", sender: self)
-        
-    }
-    
-    //TODO: Create the retrieveMessages method here:
-    
-    
-
-    
-    
-    
-    @IBAction func logOutPressed(_ sender: AnyObject) {
-        
-        //TODO: Log out the user and send them back to WelcomeViewController
-        do{
-            try Auth.auth().signOut()
-            navigationController?.popToRootViewController(animated: true)
-        } catch{
-            showDialog(title: "Sign Out Error", message: "There was something error when you perform logout, please check your internet connection and make sure its connected")
-        }
-    }
-    
-    func showDialog(title: String, message: String) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        
-        alert.addAction(UIAlertAction(title: "Understand", style: .default){
-            (UIAlertAction) in
-            alert.dismiss(animated: true, completion: nil)
-        })
-        
-        present(alert, animated: true)
-    }
-
 }
